@@ -374,14 +374,28 @@ namespace ns3 {
   bool
   MyGymEnv::ExecuteActions(Ptr < OpenGymDataContainer > action) {
     NS_LOG_FUNCTION(this);
-    NS_LOG_UNCOND("MyExecuteActions: " << action << "    at time= " << Simulator::Now().GetSeconds() << " sec");
+    
+    NS_LOG_UNCOND("MyExecuteActions: " << action <<"Agent_ID "<< (int) Agent_ID << "    at time= " << Simulator::Now().GetSeconds() << " sec");
     Ptr < OpenGymBoxContainer < float > > box = DynamicCast < OpenGymBoxContainer < float > > (action);
     std::vector < float > actionVector = box -> GetData();
     std::vector < double > actionVectord;
     for (std::vector < float > ::iterator it = actionVector.begin(); it != actionVector.end(); ++it) {
       actionVectord.push_back(double( * it));
     }
-    CellIndividualOffset::setOffsetList(actionVectord);
+    std::vector<double> Current_list=CellIndividualOffset::getOffsetList();
+    if(Agent_ID==1)
+    {
+      Current_list.at(7)=actionVectord.at(0);
+      Current_list.at(9)=actionVectord.at(1);
+    }
+    if(Agent_ID==2)
+    {
+      Current_list.at(3)=actionVectord.at(0);
+      Current_list.at(4)=actionVectord.at(1);
+      Current_list.at(6)=actionVectord.at(2);
+    }
+    std::cout<<std::endl;
+    CellIndividualOffset::setOffsetList(Current_list);
     return true;
   }
 

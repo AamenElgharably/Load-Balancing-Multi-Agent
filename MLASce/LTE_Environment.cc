@@ -238,7 +238,7 @@ static ns3::GlobalValue g_cioList("cioList",
 
     "The CIO values arranged in a string.",
 
-    ns3::StringValue("0 0 0 0 0"),
+    ns3::StringValue("0_0_0_0_0_0_0_0_0_0_0"),
 
     ns3::MakeStringChecker());
 
@@ -450,10 +450,6 @@ int main(int argc, char* argv[])
 
     double envStepTime = doubleValue.Get();
 
-    GlobalValue::GetValueByName("openGymPort", uintegerValue);
-
-    uint16_t openGymPort = uintegerValue.Get();
-
     GlobalValue::GetValueByName("outputTraceFiles", booleanValue);
 
     bool outputTraceFiles = booleanValue.Get();
@@ -495,7 +491,7 @@ int main(int argc, char* argv[])
     uint16_t nMacroUes = 40; // Number of users with realistic mobility model
 
 
-    Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface>(openGymPort);
+    
 
     
 
@@ -538,7 +534,7 @@ int main(int argc, char* argv[])
 
 
 
-    std::vector<double> cioListDouble = convertStringtoDouble(cioList, 1);
+    std::vector<double> cioListDouble(11,0);
 
     CellIndividualOffset::setOffsetList(cioListDouble);
 
@@ -631,12 +627,22 @@ int main(int argc, char* argv[])
     mobility.Install(macroEnbs);
 
     NetDeviceContainer macroEnbDevs = lteHelper->InstallEnbDevice(macroEnbs);
+
+
     uint8_t Agent_ID=1; //THIS the Agent ID
-
-    Ptr<MyGymEnv> myGymEnv = CreateObject<MyGymEnv>(envStepTime, nMacroEnbSites, nCSpeedUes + nMacroUes, macroEnbBandwidth,Agent_ID,macroEnbDevs);
-
-    myGymEnv->SetOpenGymInterface(openGymInterface);
+    uint32_t GYMPORT=6000;
+    //First ENV
+    Ptr<OpenGymInterface> openGymInterface1 = CreateObject<OpenGymInterface>(GYMPORT);
+    Ptr<MyGymEnv> myGymEnv1 = CreateObject<MyGymEnv>(envStepTime, nMacroEnbSites, nCSpeedUes + nMacroUes, macroEnbBandwidth,Agent_ID,macroEnbDevs);
+    myGymEnv1->SetOpenGymInterface(openGymInterface1);
     
+    //Second ENV
+    Agent_ID=2; //THIS the Agent ID
+    GYMPORT=6001;
+    Ptr<OpenGymInterface> openGymInterface2 = CreateObject<OpenGymInterface>(GYMPORT);
+    Ptr<MyGymEnv> myGymEnv2 = CreateObject<MyGymEnv>(envStepTime, nMacroEnbSites, nCSpeedUes + nMacroUes, macroEnbBandwidth,Agent_ID,macroEnbDevs);
+    myGymEnv2->SetOpenGymInterface(openGymInterface2);
+
     std::vector<Vector> eNBsLocation;
 
     Vector tempLocation;
@@ -1147,7 +1153,8 @@ int main(int argc, char* argv[])
 
         Ptr<LteEnbPhy> enbPhy = enbNetDevice->GetPhy();
 
-        enbPhy->TraceConnectWithoutContext("DlPhyTransmission", MakeBoundCallback(&MyGymEnv::GetPhyStats, myGymEnv));
+        enbPhy->TraceConnectWithoutContext("DlPhyTransmission", MakeBoundCallback(&MyGymEnv::GetPhyStats, myGymEnv1));
+        enbPhy->TraceConnectWithoutContext("DlPhyTransmission", MakeBoundCallback(&MyGymEnv::GetPhyStats, myGymEnv2));
 
     }
 
@@ -1189,7 +1196,8 @@ int main(int argc, char* argv[])
 
 
 
-    myGymEnv->NotifySimulationEnd();
+    myGymEnv1->NotifySimulationEnd();
+    myGymEnv2->NotifySimulationEnd();
 
     Simulator::Destroy();
 

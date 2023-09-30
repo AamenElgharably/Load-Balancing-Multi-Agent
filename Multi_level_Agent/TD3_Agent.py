@@ -46,7 +46,6 @@ class TD3_Agent():
   def learn(self):
     if self.memory.mem_cntr< self.batch_size:
       return
-    print("Learning")
     state,action,reward,new_state,done=self.memory.sample_buffer(self.batch_size)
     reward=torch.tensor(reward,dtype=torch.float).to(self.critic_1.device)
     done=torch.tensor(done).to(self.critic_1.device)
@@ -132,12 +131,12 @@ class TD3_Agent():
     self.target_critic_1.load_checkpoint()
   def save_state(self):
     print("..........Saving_state...........")
-    np.savez('tmp/agent_state.npz'+self.ID,array1=[self.learn_step_cntr ,self.time_step])
-    self.memory.save_buffer()
+    np.savez('tmp/agent_state'+self.ID+'.npz',array1=[self.learn_step_cntr ,self.time_step])
+    self.memory.save_buffer(self.ID)
   def load_state(self):
     print("..........loading_state...........")
-    load=np.load('tmp/agent_state.npz'+self.ID)
+    load=np.load('tmp/agent_state'+self.ID+'.npz')
     self.learn_step_cntr=load['array1'][0]
     self.time_step=load['array1'][1]
-    self.memory.load_buffer()
+    self.memory.load_buffer(self.ID)
 

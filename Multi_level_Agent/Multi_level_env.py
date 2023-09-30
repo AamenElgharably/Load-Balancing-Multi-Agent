@@ -26,7 +26,7 @@ class multi_level_env:
         else:
             self.Cluster=[0,1,2,3,4,5]
             self.Cluster_num=6
-        max_env_steps = 5
+        max_env_steps = 150
         self.env = ns3env.Ns3Env(port=port, stepTime=stepTime, startSim=startSim, simSeed=seed, simArgs=simArgs, debug=debug)
         self.env._max_episode_steps = max_env_steps
         self.Cell_num=6

@@ -52,13 +52,13 @@ class ReplayBuffer():
     dones = self.terminal_memory[batch]
 
     return states,actions,rewards,new_states,dones
-  def save_buffer(self):
+  def save_buffer(self,ID):
     print("...........Saving_Buffer.........")
-    np.savez('Buffer/ReplayBuffer.npz',array1=self.state_memory,array2=self.new_state_memory,
+    np.savez('Buffer/ReplayBuffer'+ID+'.npz',array1=self.state_memory,array2=self.new_state_memory,
       array3=self.reward_memory,array4=self.action_memory,array5=self.terminal_memory,mem_counter=self.mem_cntr)
-  def load_buffer(self):
+  def load_buffer(self,ID):
     print("...........Loading_Buffer.........")
-    loaded_buffer=np.load('Buffer/ReplayBuffer.npz')
+    loaded_buffer=np.load('Buffer/ReplayBuffer'+ID+'.npz')
     self.state_memory=loaded_buffer['array1']
     self.new_state_memory=loaded_buffer['array2']
     self.reward_memory=loaded_buffer['array3']

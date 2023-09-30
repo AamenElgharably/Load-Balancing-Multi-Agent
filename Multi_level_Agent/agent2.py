@@ -57,8 +57,9 @@ def main():
 				agent.learn()
 				state=next_state
 				Reward_accumilator+=reward
-		rwdarr=np.append(rwdarr,(Reward_accumilator/steps-1))
-		print(f"Episode_reward{Reward_accumilator/steps}")
+		agent.time_step-=1
+		rwdarr=np.append(rwdarr,(Reward_accumilator/(steps-1)))
+		print(f"Episode_reward{Reward_accumilator/(steps-1)}")
 		if i%10==0:
 			np.savez('reward2.npz',array1=rwdarr)
 			with open("reward2.csv",'w',newline='') as file:

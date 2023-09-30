@@ -20,13 +20,13 @@ class TD3_Agent():
     self.warmup=warmup
     self.n_action=n_actions
     self.upadate_actor_interval=update_actor_interval
-
-    self.actor=ActorNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='Actor'+ID)
-    self.critic_1=CriticNetwork(beta,input_dims,layer1_size,layer2_size,n_actions,name='Critic_1'+ID)
-    self.critic_2=CriticNetwork(beta,input_dims,layer1_size,layer2_size,n_actions,name='Critic_2'+ID)
-    self.target_actor=ActorNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='TargetActor'+ID)
-    self.target_critic_1=CriticNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='Target_Critic_1'+ID)
-    self.target_critic_2=CriticNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='Target_Critic_2'+ID)
+    self.ID=ID
+    self.actor=ActorNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='Actor'+self.ID)
+    self.critic_1=CriticNetwork(beta,input_dims,layer1_size,layer2_size,n_actions,name='Critic_1'+self.ID)
+    self.critic_2=CriticNetwork(beta,input_dims,layer1_size,layer2_size,n_actions,name='Critic_2'+self.ID)
+    self.target_actor=ActorNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='TargetActor'+self.ID)
+    self.target_critic_1=CriticNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='Target_Critic_1'+self.ID)
+    self.target_critic_2=CriticNetwork(alpha,input_dims,layer1_size,layer2_size,n_actions,name='Target_Critic_2'+self.ID)
     self.noise=noise
     self.update_network_parameters(tau=1)
 
@@ -132,12 +132,12 @@ class TD3_Agent():
     self.target_critic_1.load_checkpoint()
   def save_state(self):
     print("..........Saving_state...........")
-    np.savez('tmp/agent_state.npz',array1=[self.learn_step_cntr ,self.time_step])
-    self.ReplayBuffer.save_buffer()
+    np.savez('tmp/agent_state.npz'+self.ID,array1=[self.learn_step_cntr ,self.time_step])
+    self.memory.save_buffer()
   def load_state(self):
     print("..........loading_state...........")
-    load=np.load('tmp/agent_state.npz')
+    load=np.load('tmp/agent_state.npz'+self.ID)
     self.learn_step_cntr=load['array1'][0]
     self.time_step=load['array1'][1]
-    self.ReplayBuffer.load_buffer()
+    self.memory.load_buffer()
 
